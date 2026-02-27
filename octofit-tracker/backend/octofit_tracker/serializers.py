@@ -1,25 +1,32 @@
+
 from rest_framework import serializers
 from .models import User, Team, Activity, Leaderboard, Workout
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = '__all__'
 
 class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
         fields = '__all__'
 
+class UserSerializer(serializers.ModelSerializer):
+    team = TeamSerializer(read_only=True)
+    team_id = serializers.PrimaryKeyRelatedField(queryset=Team.objects.all(), source='team', write_only=True)
+    class Meta:
+        model = User
+        fields = ['_id', 'name', 'email', 'team', 'team_id']
+
 class ActivitySerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    user_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), source='user', write_only=True)
     class Meta:
         model = Activity
-        fields = '__all__'
+        fields = ['_id', 'user', 'user_id', 'activity_type', 'duration', 'date']
 
 class LeaderboardSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    user_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), source='user', write_only=True)
     class Meta:
         model = Leaderboard
-        fields = '__all__'
+        fields = ['_id', 'user', 'user_id', 'score', 'rank']
 
 class WorkoutSerializer(serializers.ModelSerializer):
     class Meta:

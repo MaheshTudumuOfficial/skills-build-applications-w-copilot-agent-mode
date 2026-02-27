@@ -28,6 +28,7 @@ router.register(r'activities', views.ActivityViewSet)
 router.register(r'leaderboard', views.LeaderboardViewSet)
 router.register(r'workouts', views.WorkoutViewSet)
 
+
 @api_view(['GET'])
 def api_root(request, format=None):
     return Response({
@@ -37,6 +38,12 @@ def api_root(request, format=None):
         'leaderboard': request.build_absolute_uri('leaderboard/'),
         'workouts': request.build_absolute_uri('workouts/'),
     })
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', api_root, name='api-root'),
+    path('', include(router.urls)),
+]
 
 urlpatterns = [
     path('admin/', admin.site.urls),
